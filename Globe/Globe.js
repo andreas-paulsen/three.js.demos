@@ -42,6 +42,7 @@ function init() {
     imageObj.crossOrigin = "anonymous"
     imageObj.src = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg'
     */
+    THREE.ImageUtils.crossOrigin = '';
     material.map = THREE.ImageUtils.loadTexture('https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg');
     //material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
     material.bumpScale = 0.5;
