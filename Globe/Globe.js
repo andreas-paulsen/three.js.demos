@@ -43,7 +43,7 @@ function init() {
     imageObj.src = 'earthmap1k.jpg'
 
     //material.map = THREE.ImageUtils.loadTexture('earthmap1k.jpg');
-    material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
+    //material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
     material.bumpScale = 0.5;
     var sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
