@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <title>Animated Surface</title>
+    <style>
+      body {
+        margin: 0px;
+        background-color: #fff;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <script id="vertexShader" type="x-shader/x-vertex">
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying float r; 
+    uniform float t;
+    void main() {
+        //vNormal = normal;
+        float x = position.x;
+        float y = position.y;
+        float z = 2.0*sin(x)*sin(y)*cos(t/180.0);
+        float z_x = cos(x)*sin(y)*sin(t/180.0);
+        float z_y = cos(y)*sin(x)*sin(t/180.0);
+        vNormal = vec3(-1.0*z_x, -1.0*z_y, 1.0);
+        vNormal = normalize(vNormal);
+
+        vec3 nposition = vec3(position);
+        nposition.z = z;
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(nposition,1.0);
+        
+        // Pass the position on to the fragment shader:
+        vPosition = gl_Position.xyz;
+        
+        r = (z + 2.0) / 4.0; // [0, 1]
+    }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-vertex">
+      
+    vec3 hsv2rgb(vec3 c)
+    {
+      vec4 K = vec4(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
+      vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
+      return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
+    }
+    
+    varying vec3 vNormal;
+    varying vec3 vPosition;
+    varying float r;
+    void main() {
+      float h = (1.0 - r) * 2.0 / 3.0; // 0 -> 2/3: blue, 1 -> 0: red
+      vec3 hsv = vec3(h, 1.0, 1.0);
+      vec3 rgb = hsv2rgb(hsv);
+      vec3 lightPosition = vec3(-10.0,-10.0,20.0);
+      vec4 materialColor = vec4(rgb.x, rgb.y, rgb.z, 1.0);
+      
+      // Vector from fragment to camera:
+      vec3 V = cameraPosition - vPosition;
+      
+      // Normal vector to fragment:
+      vec3 N = vNormal;
+      
+      // Vector from fragment to light:
+      vec3 L = lightPosition - vPosition;
+      
+      // Normalize vectors:
+      V = normalize(V);
+      N = normalize(N);
+      L = normalize(L);
+      
+      // Total illumination:  
+      float I = 0.0;
+      
+      // Ambient light:
+      float ka = 0.5; // ambient reflection coefficient
+      float ia = 0.5; // ambient intensity
+      float Ia = ka*ia;
+      I = I + Ia;
+      
+      // Diffuse light:
+      float Id = 0.0;
+      float NL = dot(N,L);
+      if(NL > 0.0)
+      {
+        Id = Id + NL;
+      }
+      I = I + Id;
+      
+             
+      // Specular light:
+      float Is = 0.0;
+      if(NL > 0.0)
+      {
+        vec3 R = 2.0*dot(L,N)*N - L; // Snell reflection of L
+        float ks = 0.5;
+        float is = 1.0;
+        float a = 30.0;
+        float RV = dot(R,V);
+        if(RV > 0.0)
+        {
+          Is = ks*pow(RV,a)*is;
+        }
+      }
+      
+      gl_FragColor = I*materialColor + Is*vec4(1.0, 1.0, 1.0, 0.0);
+    }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script>
+    <script src="../OrbitControls.js"></script>
+    <script src="AnimatedSurface.js"></script>
+    
+  </body>
+</html>
