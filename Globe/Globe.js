@@ -33,7 +33,16 @@ function init() {
 
     // Phong shading: https://en.wikipedia.org/wiki/Phong_shading:
     material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-    material.map = THREE.ImageUtils.loadTexture('earthmap1k.jpg');
+
+    var imageObj = new Image()
+    imageObj.onload = function () {
+        material.map = THREE.ImageUtils.loadTexture(imageObj)
+        // or maybe load image into canvas?
+    }
+    imageObj.crossOrigin = "anonymous"
+    imageObj.src = 'earthmap1k.jpg'
+
+    //material.map = THREE.ImageUtils.loadTexture('earthmap1k.jpg');
     material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
     material.bumpScale = 0.5;
     var sphere = new THREE.Mesh(geometry, material);
