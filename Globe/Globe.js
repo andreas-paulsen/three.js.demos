@@ -40,7 +40,7 @@ function init() {
         // or maybe load image into canvas?
     }
     imageObj.crossOrigin = "anonymous"
-    imageObj.src = 'earthmap1k.jpg'
+    imageObj.src = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg'
 
     //material.map = THREE.ImageUtils.loadTexture('earthmap1k.jpg');
     //material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
