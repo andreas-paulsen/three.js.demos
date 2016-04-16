@@ -90,7 +90,7 @@ function createPlane(funcTxt) {
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-5, -5, 15);
+    camera.position.set(-1, -1, 5);
     camera.lookAt(0, 0, 0);
 
     light = new THREE.DirectionalLight(0xffffff);
@@ -110,27 +110,16 @@ function init() {
 
     document.body.appendChild(renderer.domElement);
 
-    plane = createPlane("Math.sin(6.28 * x) * Math.sin(6.28 * y)");
-    scene.add(plane);
-   
     
-
     // Class:
     var Control = function () {
+        this.function = "sin(PI * x) * sin(PI * y)";
         this.wireframe = false;
-        this.func = "sin(PI * x) * sin(PI * y)";
-        this.zscale = 0.5;
     };
     var control = new Control();
     var gui = new dat.GUI({ width: 500 });
-    var wcontroller = gui.add(control, 'wireframe');
-    wcontroller.onChange(function (value) {
-        // Fires on every change, drag, keypress, etc.
-        material.wireframe = value;
-        render();
-    });
 
-    gui.add(control, 'func').onFinishChange(function (value) { // Fires when a controller loses focus
+    var onFunctionChanged = function (value) { // Fires when a controller loses focus
         var mathShortcuts = ["abs", "acos", "asin", "atan", "atan2", "cos", "exp", "log", "PI", "sin", "sqrt", "tan"];
         for (var i = 0; i < mathShortcuts.length; i++) {
             var sh = mathShortcuts[i];
@@ -145,10 +134,13 @@ function init() {
         plane = createPlane(value);
         scene.add(plane);
         render();
-    });
+    };
 
-    gui.add(control, 'zscale').onChange(function (value) {
-        scene.scale.z = value;
+    gui.add(control, 'function').onFinishChange(onFunctionChanged);
+    onFunctionChanged(control.function);
+
+    gui.add(control, 'wireframe').onChange(function (value) {
+        material.wireframe = value;
         render();
     });
 }
