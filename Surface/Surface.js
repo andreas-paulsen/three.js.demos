@@ -4,6 +4,7 @@ var renderer;
 var light;
 var material;
 var plane;
+var control;
 
 /*
     triangulates a mathematical surface z = func(x,y) over the rectangular grid: 
@@ -53,6 +54,36 @@ function triangulate(xmin, xmax, nx, ymin, ymax, ny, func) {
     return vertices;
 }
 
+function colorArray(vertices, min, max, colorMapFunction) {
+    var n = vertices.length / 3;
+    var colors = new Float32Array(3 * n);
+    for (var i = 0; i < n; i++) {
+        var z = vertices[3 * i + 2];
+        var zn = (z - min.z) / (max.z - min.z); // [0,1]
+        var color = colorMapFunction(zn);
+        colors[3 * i + 0] = color.r;
+        colors[3 * i + 1] = color.g;
+        colors[3 * i + 2] = color.b;
+    }
+    return colors;
+}
+
+function rainbow(xn) {
+    xn = 1.0 - xn;
+    xn = 0.65 * xn; // avoid violet
+    var color = new THREE.Color();
+    color.setHSL(xn, 0.5, 0.5);
+    return color;
+}
+
+function redgreen(xn) {
+    xn = 1.0 - xn;
+    xn = 0.4 * xn; // avoid violet
+    var color = new THREE.Color();
+    color.setHSL(xn, 0.5, 0.5);
+    return color;
+}
+
 function createPlane(funcTxt) {
     //var vertices = triangulate(-1, 1, 100, -1, 1, 100, function (x, y) { return Math.sin(6.28 * x) * Math.sin(6.28 * y); });
     var func = new Function("x", "y", "return " + funcTxt);
@@ -67,18 +98,13 @@ function createPlane(funcTxt) {
     var min = geometry.boundingBox.min;
     var max = geometry.boundingBox.max;
 
-    var n = vertices.length / 3;
-    var colors = new Float32Array(3 * n);
-    for (var i = 0; i < n; i++) {
-        var z = vertices[3 * i + 2];
-        var zn = (z - min.z) / (max.z - min.z); // [0,1]
-        var r = (1 - zn);
-        var g = zn;
-        var b = 0;
-        colors[3 * i + 0] = r;
-        colors[3 * i + 1] = g;
-        colors[3 * i + 2] = b;
-    }
+    var cfunc;
+    if (control.colormap === "jet")
+        cfunc = rainbow;
+    else
+        cfunc = redgreen;
+
+    var colors = colorArray(vertices, min, max, cfunc);
     geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     //var material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
@@ -90,7 +116,7 @@ function createPlane(funcTxt) {
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-1, -1, 5);
+    camera.position.set(-1, -5, 5);
     camera.lookAt(0, 0, 0);
 
     light = new THREE.DirectionalLight(0xffffff);
@@ -115,8 +141,9 @@ function init() {
     var Control = function () {
         this.function = "sin(PI * x) * sin(PI * y)";
         this.wireframe = false;
+        this.colormap = "jet";
     };
-    var control = new Control();
+    control = new Control();
     var gui = new dat.GUI({ width: 500 });
 
     var onFunctionChanged = function (value) { // Fires when a controller loses focus
@@ -141,6 +168,11 @@ function init() {
 
     gui.add(control, 'wireframe').onChange(function (value) {
         material.wireframe = value;
+        render();
+    });
+
+    gui.add(control, 'colormap', ['jet', 'redgreen']).onChange(function (value) {
+        onFunctionChanged(control.function);
         render();
     });
 }
