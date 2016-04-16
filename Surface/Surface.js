@@ -3,8 +3,13 @@ var scene;
 var renderer;
 var light;
 var material;
+var plane;
 
-
+/*
+    triangulates a mathematical surface z = func(x,y) over the rectangular grid: 
+    x = xmin + i *dx, dx = (xmax - xmin) / (nx - 1),
+    y = ymin + j *dy, dy = (ymax - ymin) / (ny - 1)
+*/
 function triangulate(xmin, xmax, nx, ymin, ymax, ny, func) {
 
     var vertices = new Float32Array(2 * 3 * 3 * (nx - 1) * (ny - 1));
@@ -48,6 +53,40 @@ function triangulate(xmin, xmax, nx, ymin, ymax, ny, func) {
     return vertices;
 }
 
+function createPlane(funcTxt) {
+    //var vertices = triangulate(-1, 1, 100, -1, 1, 100, function (x, y) { return Math.sin(6.28 * x) * Math.sin(6.28 * y); });
+    var func = new Function("x", "y", "return " + funcTxt);
+    var vertices = triangulate(-1, 1, 100, -1, 1, 100, func);
+
+    var geometry = new THREE.BufferGeometry();
+    // itemSize = 3 because there are 3 values (components) per vertex
+    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
+    geometry.computeVertexNormals(); // or light does not work
+
+    geometry.computeBoundingBox();
+    var min = geometry.boundingBox.min;
+    var max = geometry.boundingBox.max;
+
+    var n = vertices.length / 3;
+    var colors = new Float32Array(3 * n);
+    for (var i = 0; i < n; i++) {
+        var z = vertices[3 * i + 2];
+        var zn = (z - min.z) / (max.z - min.z); // [0,1]
+        var r = (1 - zn);
+        var g = zn;
+        var b = 0;
+        colors[3 * i + 0] = r;
+        colors[3 * i + 1] = g;
+        colors[3 * i + 2] = b;
+    }
+    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+    //var material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+    material = new THREE.MeshLambertMaterial({ /*color: 0x00ff00,*/ side: THREE.DoubleSide, vertexColors: THREE.VertexColors });
+    var plane = new THREE.Mesh(geometry, material);
+    return plane;
+}
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
@@ -71,29 +110,19 @@ function init() {
 
     document.body.appendChild(renderer.domElement);
 
-    var vertices = triangulate(-1, 1, 100, -1, 1, 100, function (x, y) { return Math.sin(6.28 * x) * Math.sin(6.28 * y); });
-    
-
-    var geometry = new THREE.BufferGeometry();
-    // itemSize = 3 because there are 3 values (components) per vertex
-    geometry.addAttribute('position', new THREE.BufferAttribute(vertices, 3));
-    geometry.computeVertexNormals(); // or light does not work
-
-    //var material = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
-    material = new THREE.MeshLambertMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
-    var plane = new THREE.Mesh(geometry, material);
+    plane = createPlane("Math.sin(6.28 * x) * Math.sin(6.28 * y)");
     scene.add(plane);
-
+   
     
 
     // Class:
     var Control = function () {
         this.wireframe = false;
-        this.func = "Math.sin(6.28 * x) * Math.sin(6.28 * y)";
-        this.color1 = [0, 255, 0]; 
+        this.func = "sin(PI * x) * sin(PI * y)";
+        this.zscale = 0.5;
     };
     var control = new Control();
-    var gui = new dat.GUI();
+    var gui = new dat.GUI({ width: 500 });
     var wcontroller = gui.add(control, 'wireframe');
     wcontroller.onChange(function (value) {
         // Fires on every change, drag, keypress, etc.
@@ -101,14 +130,25 @@ function init() {
         render();
     });
 
-    gui.add(control, 'func').onChange(function (value) {
-        //material.color = value;
+    gui.add(control, 'func').onFinishChange(function (value) { // Fires when a controller loses focus
+        var mathShortcuts = ["abs", "acos", "asin", "atan", "atan2", "cos", "exp", "log", "PI", "sin", "sqrt", "tan"];
+        for (var i = 0; i < mathShortcuts.length; i++) {
+            var sh = mathShortcuts[i];
+            var regex = new RegExp(sh, "g");
+            value = value.replace(regex, "Math." + sh);
+        }
+        
+
+        console.log(value);
+        if (plane)
+            scene.remove(plane);
+        plane = createPlane(value);
+        scene.add(plane);
         render();
     });
 
-    var ccontroller = gui.add(control, 'color1');
-    ccontroller.onChange(function (value) {
-        material.color = value;
+    gui.add(control, 'zscale').onChange(function (value) {
+        scene.scale.z = value;
         render();
     });
 }
