@@ -166,13 +166,13 @@ function init() {
     gui.add(control, 'function').onFinishChange(onFunctionChanged);
     onFunctionChanged(control.function);
 
-    gui.add(control, 'wireframe').onChange(function (value) {
-        material.wireframe = value;
+    gui.add(control, 'colormap', ['jet', 'redgreen']).onChange(function (value) {
+        onFunctionChanged(control.function);
         render();
     });
 
-    gui.add(control, 'colormap', ['jet', 'redgreen']).onChange(function (value) {
-        onFunctionChanged(control.function);
+    gui.add(control, 'wireframe').onChange(function (value) {
+        material.wireframe = value;
         render();
     });
 }
