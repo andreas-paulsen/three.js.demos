@@ -31,15 +31,18 @@ function init() {
 
 
     var Control = function () {
-        this.wireframe = false;
+        this.pointSize = 10;
+        this.color1 = [0, 255, 0]; // RGB array
     };
     control = new Control();
     var gui = new dat.GUI({ width: 500 });
 
-    gui.add(control, 'wireframe').onChange(function (value) {
-        material.wireframe = value;
+    gui.add(control, 'pointSize',1, 100).step(1).onChange(function (value) {
+        material.size = value;
         render();
     });
+    //gui.add(control, 'color1');
+
 }
 
 function render() {
@@ -58,7 +61,7 @@ xyzLoader('Autzen.txt', function (geometry) {
     var xc = 0.5 * min.x + 0.5 * max.x;
     var yc = 0.5 * min.y + 0.5 * max.y;
     var zc = 0.5 * min.z + 0.5 * max.z;
-    var material = new THREE.PointsMaterial({
+    material = new THREE.PointsMaterial({
         color: 0x00ff00,
         size: 10,
         vertexColors: THREE.None});
