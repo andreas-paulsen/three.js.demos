@@ -1,6 +1,6 @@
 function xyzLoader(file, callback) {
     var request = new XMLHttpRequest();
-    request.open('GET', file, false);
+    request.open('GET', file, true);
     request.onload = function () {
         var txt = request.responseText;
         var lines = txt.match(/[^\r\n]+/g);
