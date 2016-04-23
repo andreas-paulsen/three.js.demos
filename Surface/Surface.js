@@ -54,36 +54,6 @@ function triangulate(xmin, xmax, nx, ymin, ymax, ny, func) {
     return vertices;
 }
 
-function colorArray(vertices, min, max, colorMapFunction) {
-    var n = vertices.length / 3;
-    var colors = new Float32Array(3 * n);
-    for (var i = 0; i < n; i++) {
-        var z = vertices[3 * i + 2];
-        var zn = (z - min.z) / (max.z - min.z); // [0,1]
-        var color = colorMapFunction(zn);
-        colors[3 * i + 0] = color.r;
-        colors[3 * i + 1] = color.g;
-        colors[3 * i + 2] = color.b;
-    }
-    return colors;
-}
-
-function rainbow(xn) {
-    xn = 1.0 - xn;
-    xn = 0.65 * xn; // avoid violet
-    var color = new THREE.Color();
-    color.setHSL(xn, 0.5, 0.5);
-    return color;
-}
-
-function redgreen(xn) {
-    xn = 1.0 - xn;
-    xn = 0.4 * xn; // avoid violet
-    var color = new THREE.Color();
-    color.setHSL(xn, 0.5, 0.5);
-    return color;
-}
-
 function createPlane(funcTxt) {
     //var vertices = triangulate(-1, 1, 100, -1, 1, 100, function (x, y) { return Math.sin(6.28 * x) * Math.sin(6.28 * y); });
     var func = new Function("x", "y", "return " + funcTxt);
