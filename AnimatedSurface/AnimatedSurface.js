@@ -51,6 +51,7 @@ function init() {
     scene.add(mesh);
 
     renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0x000000);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
 

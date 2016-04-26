@@ -24,6 +24,7 @@ function init() {
     scene.add(alight);
 
     renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0x000000);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
