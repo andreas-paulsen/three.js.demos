@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Digital Elevation Model</title>
+    <style>
+        body {
+            margin: 0px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script> -->
+    <script src="../three.min.js"></script>
+    <script src="../dat.gui.js"></script>
+    <script src="../OrbitControls.js"></script>
+    <script src="../ColorMaps.js"></script>
+    <script src="../loadImage.js"></script>
+    <script src="DEM.js"></script>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+        varying vec2 vUv;
+        uniform sampler2D elevationTexture;
+        void main() {
+            vUv = uv;
+            gl_Position =   projectionMatrix*modelViewMatrix*vec4(position,1.0);
+            //gl_Position.z = 5.0* texture2D(elevationTexture, vUv).r; 
+        }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-fragment">
+        uniform sampler2D colorTexture;
+        varying vec2 vUv;
+
+        void main() {
+            gl_FragColor = texture2D(colorTexture, vUv); 
+        }
+    </script>
+</body>
+</html>
