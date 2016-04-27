@@ -22,13 +22,15 @@
     <script id="vertexShader" type="x-shader/x-vertex">
         varying vec2 vUv;
         uniform sampler2D elevationTexture;
+        uniform float zmin;
+        uniform float zmax;
         void main() 
         {
             vUv = uv;
             // position is read only, must make copy:
             vec3 nposition = vec3(position);
-            nposition.z = max(1.0* texture2D(elevationTexture, uv).r, 0.0);
-            
+            nposition.z = zmin + texture2D(elevationTexture, uv).r * (zmax - zmin);
+            nposition.z = max(nposition.z, 0.0);
             gl_Position = projectionMatrix*modelViewMatrix*vec4(nposition,1.0);
         }
     </script>
