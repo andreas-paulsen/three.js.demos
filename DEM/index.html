@@ -11,8 +11,8 @@
     </style>
 </head>
 <body>
-    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script> -->
-    <script src="../three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script> 
+    <!-- <script src="../three.min.js"></script> -->
     <script src="../dat.gui.js"></script>
     <script src="../OrbitControls.js"></script>
     <script src="../ColorMaps.js"></script>
@@ -22,10 +22,14 @@
     <script id="vertexShader" type="x-shader/x-vertex">
         varying vec2 vUv;
         uniform sampler2D elevationTexture;
-        void main() {
+        void main() 
+        {
             vUv = uv;
-            gl_Position =   projectionMatrix*modelViewMatrix*vec4(position,1.0);
-            //gl_Position.z = 5.0* texture2D(elevationTexture, vUv).r; 
+            // position is read only, must make copy:
+            vec3 nposition = vec3(position);
+            nposition.z = max(1.0* texture2D(elevationTexture, uv).r, 0.0);
+            
+            gl_Position = projectionMatrix*modelViewMatrix*vec4(nposition,1.0);
         }
     </script>
     <script id="fragmentShader" type="x-shader/x-fragment">

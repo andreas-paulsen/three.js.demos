@@ -9,7 +9,7 @@ var elevationTexture;
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-1, -5, 5);
+    camera.position.set(-1, -5, 55);
     camera.lookAt(0, 0, 0);
 
     light = new THREE.DirectionalLight(0xffffff);
@@ -64,22 +64,30 @@ function render() {
     renderer.render(scene, camera);
 }
 
-// LOD-level= 1 (4 tiles)
-// North/South = 1 = South
-// West/East = 0 = West, 256x256 .jpg
-var url = 'http://services.arcgisonline.com/arcgis/rest/services/World_Imagery/MapServer/tile/1/1/0';
-loadImage(url, function (texture) {
-    map = texture;
+var tloader1 = new THREE.TextureLoader();
+tloader1.load('MallorcaSatelite2.png', function (texture1) {
+    map = texture1;
     var tloader = new THREE.TextureLoader();
-    tloader.load('lena.png', function (texture) {
-        var v1 = THREE.UnsignedByteType;
-        var v2 = THREE.LuminanceAlphaFormat;
-        var v3 = THREE.RGBFormat;
-        var v4 = THREE.AlphaFormat;
-        var v5 = THREE.LuminanceFormat;
+    tloader.load('Mallorca.PNG', function (texture) {
         elevationTexture = texture;
-    });
-    init();
-    render();
+        init();
+        render();
+    },
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+	// Function called when download errors
+	function (xhr) {
+	    console.log('An error happened');
+	});
+},
+function (xhr) {
+    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+},
+function (xhr) {
+    console.log('An error happened');
 });
+
+
+
 
