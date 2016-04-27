@@ -65,9 +65,11 @@ function render() {
 }
 
 var tloader1 = new THREE.TextureLoader();
+tloader1.crossOrigin = '';
 tloader1.load('MallorcaSatelite2.png', function (texture1) {
     map = texture1;
     var tloader = new THREE.TextureLoader();
+    tloader.crossOrigin = '';
     tloader.load('Mallorca.PNG', function (texture) {
         elevationTexture = texture;
         init();
