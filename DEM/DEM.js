@@ -70,9 +70,10 @@ function render() {
 }
 
 function importMap(mapServer, xmin, ymin, xmax, ymax, wkid, callback) {
+    var size = 1000;
     var url = mapServer + "/export?"
     url = url + "bbox=" + xmin + "%2C" + ymin + "%2C" + xmax + "%2C" + ymax + "&bboxSR=" + wkid;
-    url = url + "&layers=&layerDefs=&size=&imageSR=" + wkid + "&format=png&transparent=false&dpi=&time=&layerTimeOptions=&dynamicLayers=&gdbVersion=&mapScale=&f=json";
+    url = url + "&layers=&layerDefs=&size=" + size + "%2C" + size + "&imageSR=" + wkid + "&format=png&transparent=false&dpi=&time=&layerTimeOptions=&dynamicLayers=&gdbVersion=&mapScale=&f=json";
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.onload = function () {
@@ -82,7 +83,14 @@ function importMap(mapServer, xmin, ymin, xmax, ymax, wkid, callback) {
     xhr.send();
 }
 
-var mapServer = "http://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer";
+var arcgisServices = "http://server.arcgisonline.com/arcgis/rest/services/";
+var service = "Ocean/World_Ocean_Base";
+//var service = "ESRI_Imagery_World_2D";
+var service = "NatGeo_World_Map";
+var service = "World_Imagery";
+
+var mapServer = arcgisServices + service +  "/MapServer";
+
 // Mallorca:
 var xmin = 3655400;
 var xmax = 3760100;
