@@ -64,11 +64,31 @@ function render() {
     renderer.render(scene, camera);
 }
 
-var tloader1 = new THREE.TextureLoader();
-tloader1.load('MallorcaSatelite2.png', function (texture1) {
-    map = texture1;
+function importMap(mapServer, xmin, ymin, xmax, ymax, wkid, callback) {
+    var url = mapServer + "/export?"
+    url = url + "bbox=" + xmin + "%2C" + ymin + "%2C" + xmax + "%2C" + ymax + "&bboxSR=" + wkid;
+    url = url + "&layers=&layerDefs=&size=&imageSR=" + wkid + "&format=png&transparent=false&dpi=&time=&layerTimeOptions=&dynamicLayers=&gdbVersion=&mapScale=&f=json";
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = function () {
+        var obj = JSON.parse(xhr.response);
+        callback(obj);
+    }
+    xhr.send();
+}
+
+var mapServer = "http://server.arcgisonline.com/arcgis/rest/services/Ocean/World_Ocean_Base/MapServer";
+// Mallorca:
+var xmin = 3655400;
+var xmax = 3760100;
+var ymin = 1821000;
+var ymax = 1903000;
+var wkid = 3035;
+
+function loadElevation() {
     var tloader = new THREE.TextureLoader();
-    tloader.load('Mallorca.PNG', function (texture) {
+    tloader.crossOrigin = "";
+    tloader.load('MallorcaNewer16U.png', function (texture) {
         elevationTexture = texture;
         init();
         render();
@@ -80,13 +100,26 @@ tloader1.load('MallorcaSatelite2.png', function (texture1) {
 	function (xhr) {
 	    console.log('An error happened');
 	});
-},
-function (xhr) {
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-},
-function (xhr) {
-    console.log('An error happened');
-});
+}
+
+function loadMap(url) {
+    var tloader1 = new THREE.TextureLoader();
+    tloader1.crossOrigin = "";
+    tloader1.load(url, function (texture1) {
+        map = texture1;
+        loadElevation();
+    },
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function (xhr) {
+        console.log('An error happened');
+    });
+}
+
+importMap(mapServer, xmin, ymin, xmax, ymax, wkid, function (info) { loadMap(info.href); });
+
+//loadMap('MallorcaSatelite2.png');
 
 
 
