@@ -21,6 +21,7 @@ function init() {
     scene.add(alight);
 
     renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor(0x000000);
     renderer.setSize(window.innerWidth, window.innerHeight);
 
     controls = new THREE.OrbitControls(camera, renderer.domElement);
@@ -31,10 +32,14 @@ function init() {
 
     var geometry = new THREE.PlaneGeometry(5, 5, 100, 100);
 
+    var zmin = 0.0;
+    var zmax = 1.0;
 
     var uniforms = {
         colorTexture: { type: 't', value: map },
         elevationTexture: { type: 't', value: elevationTexture },
+        zmin: {type: '1f', value: zmin},
+        zmax: {type: '1f', value: zmax }
     };
     var smaterial = new THREE.ShaderMaterial({
         uniforms: uniforms,  
