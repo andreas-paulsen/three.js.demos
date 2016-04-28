@@ -6,10 +6,38 @@ var material;
 var control;
 var map;
 var elevationTexture;
+var plane;
+
+function changeGeometry() {
+    if (plane)
+        scene.remove(plane);
+
+    var geometry = new THREE.PlaneGeometry(5, 5, control.size, control.size);
+
+    var zmin = 0.0;
+    var zmax = 1.0;
+
+    var uniforms = {
+        colorTexture: { type: 't', value: map },
+        elevationTexture: { type: 't', value: elevationTexture },
+        zmin: { type: '1f', value: zmin },
+        zmax: { type: '1f', value: zmax }
+    };
+    var smaterial = new THREE.ShaderMaterial({
+        uniforms: uniforms,
+        vertexShader: document.getElementById('vertexShader').textContent,
+        fragmentShader: document.getElementById('fragmentShader').textContent
+    });
+
+    //var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: map });
+    plane = new THREE.Mesh(geometry, smaterial);
+    scene.add(plane);
+}
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-1, -5, 55);
+    camera.position.set(0, -2, 5);
     camera.lookAt(0, 0, 0);
 
     light = new THREE.DirectionalLight(0xffffff);
@@ -30,37 +58,25 @@ function init() {
 
     document.body.appendChild(renderer.domElement);
 
-    var geometry = new THREE.PlaneGeometry(5, 5, 100, 100);
-
-    var zmin = 0.0;
-    var zmax = 1.0;
-
-    var uniforms = {
-        colorTexture: { type: 't', value: map },
-        elevationTexture: { type: 't', value: elevationTexture },
-        zmin: {type: '1f', value: zmin},
-        zmax: {type: '1f', value: zmax }
-    };
-    var smaterial = new THREE.ShaderMaterial({
-        uniforms: uniforms,  
-        vertexShader: document.getElementById('vertexShader').textContent,
-        fragmentShader: document.getElementById('fragmentShader').textContent
-    });
-
-    //var material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: map });
-    var plane = new THREE.Mesh(geometry, smaterial);
-    scene.add(plane);
+    
 
     var Control = function () {
-        this.wireframe = false;
+        this.size = 100;
+        this.map = "World_Imagery";
     };
     control = new Control();
-    var gui = new dat.GUI({ width: 500 });
+    var gui = new dat.GUI({ width: 300 });
 
-    gui.add(control, 'wireframe').onChange(function (value) {
-        material.wireframe = value;
+    gui.add(control, 'size', 10, 400).step(1).onFinishChange(function (value) {
+        changeGeometry();
         render();
     });
+    gui.add(control, 'map', ['ESRI_Imagery_World_2D', 'NatGeo_World_Map', 'World_Imagery']).onChange(function (value) {
+        var mapServer = arcgisServices + value + "/MapServer";
+        importMap(mapServer, xmin, ymin, xmax, ymax, wkid, function (info) { loadMap(info.href); });
+        render();
+    });
+
 }
 
 function render() {
@@ -98,12 +114,14 @@ var ymin = 1821000;
 var ymax = 1903000;
 var wkid = 3035;
 
+init();
+
 function loadElevation() {
     var tloader = new THREE.TextureLoader();
     tloader.crossOrigin = "";
     tloader.load('MallorcaNewer16U.png', function (texture) {
         elevationTexture = texture;
-        init();
+        changeGeometry();
         render();
     },
     function (xhr) {
