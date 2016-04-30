@@ -46,6 +46,7 @@ function init() {
 
     var materialArray = [];
     var tloader = new THREE.TextureLoader();
+    tloader.crossOrigin = '';
     tloader.load(urls[0], function (t) {
         materialArray.push(new THREE.MeshBasicMaterial({ map: t, side: THREE.BackSide }));
         tloader.load(urls[1], function (t) {
