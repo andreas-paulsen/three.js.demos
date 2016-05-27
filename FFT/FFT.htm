@@ -1,0 +1,49 @@
+<HTML>
+<HEAD>
+<META NAME="GENERATOR" Content="Microsoft Visual Studio">
+<TITLE>FFT</TITLE>
+</HEAD>
+<BODY>
+    <script type="text/javascript" async
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    <H1>Fast Fourier Transform</H1>
+    The Discrete Fourier Transform (DFT) of a complex input vector with N elements:
+    \[ x=[x_0, x_1, ..., x_{N-1}] \]
+    is itself a complex vector with N elements:
+    \[ X=[X_0, X_1, ..., X_{N-1}] \]<br /> 
+    where the k'th element is given by:
+    \[ Xk = \sum_{n=0}^{N-1} { x_n (W_N)^{nk} }\]
+    Where we have introduced the <em>twiddle factor</em>, N'th complex root of unity:
+    \[  W_N=e^{-2\pi i/N} \]
+    <img src="Twiddle.png"><br />
+    
+    The Inverse Discrete Fourier Transform is given by:
+    \[ xk = \frac{1}{N}\sum_{n=0}^{N-1} { X_n (W_N)^{-nk} } \] 
+
+    From the formulas we see that the DFT and IDFT has complexity: \( O(N^2) \).
+    
+    <H1>Fast Fourier Transform</H1>
+    We require that N is a power of two.
+    Split the sum into an even and an odd part:
+    \[ Xk = \sum_{m=0}^{N/2-1} { x_{2m} (W_N)^{2mk} } + \sum_{m=0}^{N/2-1} { x_{2m+1} (W_N)^{(2m+1)k} } \]
+    Rearranging:
+    \[ Xk = \sum_{m=0}^{N/2-1} { x_{2m} (W_{N/2})^{mk} } + (W_{N})^{k} \sum_{m=0}^{N/2-1} { x_{2m+1} (W_{N/2})^{mk} } \]
+    where the first sum is the DFT of the even elements and the second sum is the DFT of the odd elements:
+    \[ Xk = E_k + (W_{N})^{k}O_k \]
+    We apply this formula recursively until we only have vectors with one element<br />
+    E.g. N=4:
+    \[ x= [x_0, x_1, x_2, x_3] \]
+    \[ X_k = F(x) = F([x_0, x_2]) + W_4^{k}F([x_1, x_3]) \]
+    \[ X_k = [F([x_0]) + W_2^{k}F([x_2])] + W_4^{k}[F([x_1]) + W_2^{k}F([x_3])] \]
+    From the definition we notice that the DFT of a vector with one element is the element itself.<br /> 
+    Therefore:
+    \[ X_k = x_0 + W_2^{k}x_2 + W_4^{k}(x_1 + W_2^{k}x_3) \]
+    We see that this sum has 3 = log2(8) terms.<br />
+    FFT has complexity: \( O(Nlog_2(N)) \).
+    This is a huge improvement over DFT. 
+    <img src="Timings.png"><br />
+
+    Extrapolating we find that DFT of a million elements would take 83 minutes whereas the FFT takes 0.5 s!
+</BODY>
+</HTML>
