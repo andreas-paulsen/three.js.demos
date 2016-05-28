@@ -56,7 +56,8 @@ function getTexture() {
 
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.OrthographicCamera(-1.0, 1.0, 1.0, - 1.0, 1, 1000 );
+    var a = window.innerWidth / window.innerHeight;
+    camera = new THREE.OrthographicCamera(-0.7 * a, 0.7 * a, 0.7, -0.7, 1, 1000);
     scene.add( camera );
     camera.position.set(0, 0, 10);
     camera.lookAt(0, 0, 0);
