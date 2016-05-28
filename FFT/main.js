@@ -4,8 +4,8 @@ var renderer;
 var light;
 var material;
 var control;
-var nx = 256;
-var ny = 256;
+var nx = 512;
+var ny = 512;
 var data;
 
 
@@ -41,7 +41,7 @@ function getTexture(x) {
 function init() {
     scene = new THREE.Scene();
     var a = window.innerWidth / window.innerHeight;
-    camera = new THREE.OrthographicCamera(-1.0*a, 1.0*a, 1.0, - 1.0, 1, 1000 );
+    camera = new THREE.OrthographicCamera(-0.7 * a, 0.7 * a, 0.7, -0.7, 1, 1000);
     scene.add( camera );
     camera.position.set(0, 0, 10);
     camera.lookAt(0, 0, 0);
@@ -60,7 +60,7 @@ function init() {
     document.body.appendChild(renderer.domElement);
 
     var geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
-    data = hat();
+    data = hat('round');
     var texture = getTexture(data);
     material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: texture });
     var plane = new THREE.Mesh(geometry, material);
@@ -69,6 +69,12 @@ function init() {
 
     var Control = function () {
         this.wireframe = false;
+        this.squareHat = function () {
+            setHat('square');
+        };
+        this.roundHat = function () {
+            setHat('round');
+        };
         this.fft = function () {
             var xc = toComplex(data);
             var X = fft2(xc, nx, ny);
@@ -87,6 +93,8 @@ function init() {
         material.wireframe = value;
         render();
     });
+    gui.add(control, 'squareHat');
+    gui.add(control, 'roundHat');
     gui.add(control, 'fft');
 }
 
@@ -99,16 +107,24 @@ function render() {
 init();
 render();
 
-function hat() {
+function hat(type) {
     var nx2 = nx / 2;
     var ny2 = ny / 2;
-    var w2 = 4;
-    var h2 = 4;
+    var rmax = 6;
     var x = new Float32Array(nx * ny);
     for (var ix = 0; ix < nx; ix++) {
         for (var iy = 0; iy < ny; iy++) {
             var v = 0;
-            if (ix >= nx2 - w2 && ix < nx2 + w2 && iy >= ny2 - h2 && iy < ny2 + h2) {
+            var r;
+            var dx = ix - nx2;
+            var dy = iy - ny2;
+            if (type === "square") {
+                r = Math.max(Math.abs(dx), Math.abs(dy));
+            }
+            else {
+                r = Math.sqrt(dx * dx + dy * dy);
+            }
+            if (r <= rmax) {
                 v = 1;
             }
             x[ix * ny + iy] = v;
@@ -117,8 +133,8 @@ function hat() {
     return x;
 }
 
-function setHat() {
-    var xr = hat();
+function setHat(type) {
+    var xr = hat(type);
     data = xr;
     var texture = getTexture(xr);
     material.map = texture;
@@ -126,4 +142,3 @@ function setHat() {
     render();
    
 }
-//setHat();
