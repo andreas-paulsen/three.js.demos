@@ -23,7 +23,6 @@
 
     From the formulas we see that the DFT and IDFT has complexity: \( O(N^2) \).
     
-    <H1>Fast Fourier Transform</H1>
     We require that N is a power of two.
     Split the sum into an even and an odd part:
     \[ Xk = \sum_{m=0}^{N/2-1} { x_{2m} (W_N)^{2mk} } + \sum_{m=0}^{N/2-1} { x_{2m+1} (W_N)^{(2m+1)k} } \]
@@ -31,6 +30,14 @@
     \[ Xk = \sum_{m=0}^{N/2-1} { x_{2m} (W_{N/2})^{mk} } + (W_{N})^{k} \sum_{m=0}^{N/2-1} { x_{2m+1} (W_{N/2})^{mk} } \]
     where the first sum is the DFT of the even elements and the second sum is the DFT of the odd elements:
     \[ Xk = E_k + (W_{N})^{k}O_k \]
+    From the definition of the twiddle factor we see that:
+    \[ (W_N)^{N/2} = -1 \]
+    and
+    \[ (W_{N/2})^{N/2} = 1 \]
+    Therefore:
+    \[ X_{k+N/2} = E_k - (W_{N})^{k}O_k \]
+
+
     We apply this formula recursively until we only have vectors with one element<br />
     E.g. N=4:
     \[ x= [x_0, x_1, x_2, x_3] \]
