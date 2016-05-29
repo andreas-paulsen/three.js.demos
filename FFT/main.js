@@ -68,12 +68,19 @@ function init() {
 
 
     var Control = function () {
-        this.wireframe = false;
         this.squareHat = function () {
             setHat('square');
         };
         this.roundHat = function () {
             setHat('round');
+        };
+        this.doubleSlit = function () {
+            var xr = doubleSlit();
+            data = xr;
+            var texture = getTexture(xr);
+            material.map = texture;
+            material.needsUpdate = true;
+            render();
         };
         this.fft = function () {
             var xc = toComplex(data);
@@ -88,13 +95,9 @@ function init() {
     };
     control = new Control();
     var gui = new dat.GUI({ width: 500 });
-
-    gui.add(control, 'wireframe').onChange(function (value) {
-        material.wireframe = value;
-        render();
-    });
     gui.add(control, 'squareHat');
     gui.add(control, 'roundHat');
+    gui.add(control, 'doubleSlit');
     gui.add(control, 'fft');
 }
 
@@ -129,6 +132,24 @@ function hat(type) {
             }
             x[ix * ny + iy] = v;
         }
+    }
+    return x;
+}
+
+function doubleSlit() {
+    var x = new Float32Array(nx * ny);
+    for (var ix = 0; ix < nx; ix++) {
+        for (var iy = 0; iy < ny; iy++) {
+            x[ix * ny + iy] = 0;
+        }
+    }
+    var nx2 = nx / 2;
+    var ny2 = ny / 2;
+    var h2 = 5;
+    var d2 = 10;
+    for (var iy = ny2 - h2; iy < ny2 + h2; iy++) {
+        x[(nx2 - d2) * ny + iy] = 1;
+        x[(nx2 + d2) * ny + iy] = 1;
     }
     return x;
 }
