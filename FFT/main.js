@@ -13,31 +13,6 @@ function index(ix, iy) {
     return ix * ny + iy;
 }
 
-function getTexture(x) {
-    var min = x[0];
-    var max = x[0];
-    for (var i = 1; i < x.length; i++) {
-        min = Math.min(min, x[i]);
-        max = Math.max(max, x[i]);
-    }
-    var udata = new Uint8Array(3 * x.length);
-    var i = 0;
-    for (var iy = 0; iy < ny; iy++) {
-        for (var ix = 0; ix < nx; ix++) {
-            var t = x[index(ix, iy)];
-            t = (t - min) / (max - min);
-            var color = rainbow(t);
-            udata[i * 3 + 0] = 255 * color.r;
-            udata[i * 3 + 1] = 255 * color.g;
-            udata[i * 3 + 2] = 255 * color.b;
-            i++;
-        }
-    }
-    var texture = new THREE.DataTexture(udata, nx, ny, THREE.RGBFormat);
-    texture.needsUpdate = true;
-    return texture;
-}
-
 function init() {
     scene = new THREE.Scene();
     var a = window.innerWidth / window.innerHeight;
@@ -61,7 +36,7 @@ function init() {
 
     var geometry = new THREE.PlaneGeometry(1, 1, 1, 1);
     data = hat('round');
-    var texture = getTexture(data);
+    var texture = matrix2rgbtexture(data,nx,ny,rainbow);
     material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: texture });
     var plane = new THREE.Mesh(geometry, material);
     scene.add(plane);
@@ -77,7 +52,7 @@ function init() {
         this.doubleSlit = function () {
             var xr = doubleSlit();
             data = xr;
-            var texture = getTexture(xr);
+            var texture = matrix2rgbtexture(data, nx, ny, rainbow);
             material.map = texture;
             material.needsUpdate = true;
             render();
@@ -87,7 +62,7 @@ function init() {
             var X = fft2(xc, nx, ny);
             var XS = fftshift2(X, nx, ny);
             data = abs(XS);
-            var texture = getTexture(data);
+            var texture = matrix2rgbtexture(data, nx, ny, rainbow);
             material.map = texture;
             material.needsUpdate = true;
             render();
@@ -157,7 +132,7 @@ function doubleSlit() {
 function setHat(type) {
     var xr = hat(type);
     data = xr;
-    var texture = getTexture(xr);
+    var texture = matrix2rgbtexture(data, nx, ny, rainbow);
     material.map = texture;
     material.needsUpdate = true;
     render();

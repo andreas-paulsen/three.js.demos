@@ -36,24 +36,6 @@ function JacobiIterate() {
     }
 }
 
-function getTexture() {
-    var data = new Uint8Array(3 * nx * ny);
-    var i = 0;
-    for (var iy = 0; iy < ny; iy++) {
-        for (var ix = 0; ix < nx; ix++) {
-            var t = T[index(ix, iy)];
-            var color = rainbow(t);
-            data[i * 3 + 0] = 255 * color.r;
-            data[i * 3 + 1] = 255 * color.g;
-            data[i * 3 + 2] = 255 * color.b;
-            i++;
-        }
-    }
-    var texture = new THREE.DataTexture(data, nx, ny, THREE.RGBFormat);
-    texture.needsUpdate = true;
-    return texture;
-}
-
 function init() {
     scene = new THREE.Scene();
     var a = window.innerWidth / window.innerHeight;
@@ -77,7 +59,7 @@ function init() {
 
     var geometry = new THREE.PlaneGeometry(1, 1, 100, 100);
     initializeT();
-    texture = getTexture();
+    texture = matrix2rgbtexture(T, nx, ny, rainbow);
     material = new THREE.MeshBasicMaterial({ /*color: 0xffff00,*/ side: THREE.DoubleSide, map: texture });
     //var material = new THREE.MeshLambertMaterial({ /*color: 0x00ff00,*/ side: THREE.DoubleSide, vertexColors: THREE.VertexColors });
     var plane = new THREE.Mesh(geometry, material);
@@ -105,7 +87,7 @@ function render() {
 function animate() {
     requestAnimationFrame(animate);
     JacobiIterate();
-    texture = getTexture();
+    texture = matrix2rgbtexture(T, nx, ny, rainbow);
     material.map = texture;
     material.needsUpdate = true;
     render();
