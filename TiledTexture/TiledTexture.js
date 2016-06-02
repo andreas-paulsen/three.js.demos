@@ -44,6 +44,7 @@ function init() {
 
     var geometry = new THREE.PlaneGeometry(1.7, 1, 100, 100);
     var loader = new THREE.TextureLoader();
+    loader.crossOrigin = '';
     loader.load('landscapeLarge.jpg', function (texture) {
         material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: texture });
         var plane = new THREE.Mesh(geometry, material);
