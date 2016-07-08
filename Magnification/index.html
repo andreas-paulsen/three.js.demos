@@ -1,0 +1,42 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Texture Magnification</title>
+    <style>
+        body {
+            margin: 0px;
+            background-color: #fff;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r75/three.js"></script> -->
+    <script src="../three.min.js"></script>
+    <script src="../dat.gui.js"></script>
+    <script src="../OrbitControls.js"></script>
+    <script src="../ColorMaps.js"></script>
+    <script src="../TextureUtils.js"></script>
+    <script src="main.js"></script>
+
+    <script id="vertexShader" type="x-shader/x-vertex">
+        precision mediump float;
+        varying vec2 v_uv;
+
+        void main()	{
+            v_uv = vec2(uv.x, uv.y);
+            gl_Position = projectionMatrix *        modelViewMatrix *        vec4(position, 1.0);
+        }
+    </script>
+    <script id="fragmentShader" type="x-shader/x-vertex">
+        precision mediump float;
+        uniform sampler2D seismic_texture;
+        uniform vec2 seismic_texture_size;
+        varying vec2 v_uv;
+        void main()	{
+            float a = texture2D(seismic_texture, vec2(v_uv.s, v_uv.t)).r;
+            gl_FragColor = vec4(a, a, a, 1);
+        }
+    </script>
+</body>
+</html>
