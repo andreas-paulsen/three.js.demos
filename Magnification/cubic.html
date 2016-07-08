@@ -1,0 +1,40 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>Fast Third-Order Texture Filtering</title>
+</head>
+<body>
+    <script type="text/javascript" async
+            src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+    Cubic interpolation of the function f(x) at the sample i + a is a weighted sum of the 4 nearest neighbour samples: 
+    \[ f_{i+\alpha} = w_0f_{i-1}+w_1f_{i}+w_2f_{i+1}+w_3f_{i+2}\]
+    Since linear interpolation is implemented in hardware on the graphics card we want to express this sum in terms of two linearly interpolated values. <br />
+    Linear interpolation takes the form
+    \[ f_{i+\alpha} = (1-\alpha)f_i+\alpha f_{i+1}\]
+    Consider a weighted sum of two consecutive samples:
+    \( s = af_i+bf_{i+1}\)
+    We guess that this can be expressed as a scaled linear interpolation:
+    \( s = \beta f_{i+\alpha} \)
+    <br />
+    In which case:
+    \( a = (1-\alpha)\beta\)
+    and
+    \( b = \alpha\beta\).
+    For this to hold we must have: 
+    \( \beta = (a+b) \)
+    and
+    \( \alpha = b/(a+b) \)
+    Therefore 
+    \[ af_i+bf_{i+1} = (a+b)f_{i+b/(a+b)} \]
+    Applying this twice:
+    \[ f_{i+\alpha} = (w_0+w_1)f_u+(w_2+w_3)f_v \]
+ 
+
+    <h3>References</h3>
+    <a href="http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter20.html">GPU Gems 2: Fast Third-Order Texture Filtering</a>
+
+</body>
+</html>

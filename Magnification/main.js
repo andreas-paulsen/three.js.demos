@@ -103,12 +103,18 @@ function init() {
         texture.needsUpdate = true;
         render();
     });
-    gui.add(control, 'minFilter', ['Nearest', 'LinearMipMapLinear']).onChange(function (value) {
+    gui.add(control, 'minFilter', ['Nearest', 'LinearMipMapLinear', 'NearestMipMapNearest', 'LinearFilter']).onChange(function (value) {
         if (value === 'Nearest') {
             texture.minFilter = THREE.NearestFilter;
         }
         else if (value === 'LinearMipMapLinear') {
             texture.minFilter = THREE.LinearMipMapLinearFilter;
+        }
+        else if (value === 'NearestMipMapNearest') {
+            texture.minFilter = THREE.NearestMipMapNearestFilter;
+        }
+        else if (value === 'LinearFilter') {
+            texture.minFilter = THREE.LinearFilter;
         }
         texture.needsUpdate = true;
         render();

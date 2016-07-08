@@ -1,0 +1,25 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+</head>
+<body>
+    <h1>Magnification</h1>
+    As the user zooms in on the image values must be interpolated in between image samples.
+    This can be done by nearest neighbour or bilinear interpolation. Both these are hardware implemented on the GPU.<br />
+    Zooming in and especially when looking at the sign in the center of the image we note that bilinear interpolation gives a far better result. 
+
+    <h1>Minification</h1>
+    When the user zooms out the image must be downsampled to avoid aliasing. 
+
+    The aliasing is appearent when using both Nearest and Linear Minification, especially when zooming in and out and looking at the sign in the center of the image.
+    The other two filters: LinearMipMapLinear and NearestMipMapNearest use mipmaps to avoid aliasing.
+    LinearMipMapLinear is the default and it use bilinear filtering of image at two closest mimap levels followed by linear interpolation between interpolated images at the two mipmap levels (trilinear interpolation).
+
+    
+
+
+</body>
+</html>
