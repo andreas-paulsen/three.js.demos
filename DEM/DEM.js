@@ -15,7 +15,7 @@ function changeGeometry() {
     var geometry = new THREE.PlaneGeometry(5, 5, control.size, control.size);
 
     var zmin = 0.0;
-    var zmax = 1.0;
+    var zmax = 0.3;
 
     var uniforms = {
         colorTexture: { type: 't', value: map },
@@ -86,7 +86,7 @@ function render() {
 }
 
 function importMap(mapServer, xmin, ymin, xmax, ymax, wkid, callback) {
-    var size = 1000;
+    var size = 2048;
     var url = mapServer + "/export?"
     url = url + "bbox=" + xmin + "%2C" + ymin + "%2C" + xmax + "%2C" + ymax + "&bboxSR=" + wkid;
     url = url + "&layers=&layerDefs=&size=" + size + "%2C" + size + "&imageSR=" + wkid + "&format=png&transparent=false&dpi=&time=&layerTimeOptions=&dynamicLayers=&gdbVersion=&mapScale=&f=json";
@@ -108,18 +108,18 @@ var service = "World_Imagery";
 var mapServer = arcgisServices + service +  "/MapServer";
 
 // Mallorca:
-var xmin = 3655400;
-var xmax = 3760100;
-var ymin = 1821000;
-var ymax = 1903000;
-var wkid = 3035;
+var xmin = 2.3;
+var xmax = 3.700000512;
+var ymin = 38.599999488;
+var ymax = 40;
+var wkid = 4258;
 
 init();
 
 function loadElevation() {
     var tloader = new THREE.TextureLoader();
     tloader.crossOrigin = "";
-    tloader.load('MallorcaNewer16U.png', function (texture) {
+    tloader.load('Mallorca.png', function (texture) {
         elevationTexture = texture;
         changeGeometry();
         render();
