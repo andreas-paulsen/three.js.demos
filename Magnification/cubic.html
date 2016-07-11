@@ -11,6 +11,14 @@
     </script>
     Cubic interpolation of the function f(x) at the sample i + a is a weighted sum of the 4 nearest neighbour samples: 
     \[ f_{i+\alpha} = w_0f_{i-1}+w_1f_{i}+w_2f_{i+1}+w_3f_{i+2}\]
+    Where we choose weightings based on uniform cubic B-splines:
+    \[ w_0 = 1/6(-\alpha^3+3\alpha^2-\alpha+1) \]
+    \[ w_1 = 1/6(3\alpha^3-6\alpha^2+4) \]
+    \[ w_2 = 1/6(-3\alpha^3+3\alpha^2+1) \]
+    \[ w_3 = 1/6\alpha^3 \]
+    Note that the B-splines do not pass trough \( f_i \) or \( f_{i+1} \).
+
+    <br />
     Since linear interpolation is implemented in hardware on the graphics card we want to express this sum in terms of two linearly interpolated values. <br />
     Linear interpolation takes the form
     \[ f_{i+\alpha} = (1-\alpha)f_i+\alpha f_{i+1}\]
@@ -31,6 +39,10 @@
     \[ af_i+bf_{i+1} = (a+b)f_{i+b/(a+b)} \]
     Applying this twice:
     \[ f_{i+\alpha} = (w_0+w_1)f_u+(w_2+w_3)f_v \]
+    where
+    \[ u=i-1+\frac{w_1}{w_0+w_1}\]
+    and
+    \[ v=i+1+\frac{w_3}{w_2+w_3}\]
  
 
     <h3>References</h3>

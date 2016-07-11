@@ -5,7 +5,7 @@ var light;
 var material;
 var control;
 var texture;
-
+var stats;
 
 function index(ix, iy) {
     return ix * ny + iy;
@@ -68,7 +68,7 @@ function init() {
         var fragShader = document.getElementById('fragmentShader').innerHTML;
 
         //material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide, map: texture });
-        var material = new THREE.ShaderMaterial({
+        material = new THREE.ShaderMaterial({
             vertexShader: vertShader,
             fragmentShader: fragShader,
             uniforms: {
@@ -76,11 +76,11 @@ function init() {
                 seismic_texture_size: { type: '2f', value: [1024, 1024] },
             },
             defines: {
-                SUPERSAMPLE: true,
-                BICUBIC_INTERPOLATE: true
+                
             },
             side: THREE.DoubleSide
         });
+        material.bumpMap = true; // or dFdx and dFdy will not work in shader
         var plane = new THREE.Mesh(geometry, material);
         scene.add(plane);
         render();
@@ -90,6 +90,7 @@ function init() {
     var Control = function () {
         this.magFilter = 'Linear';
         this.minFilter = 'LinearMipMapLinear';
+        this.superSampling = false;
     };
     control = new Control();
     var gui = new dat.GUI({ width: 500 });
@@ -119,12 +120,26 @@ function init() {
         texture.needsUpdate = true;
         render();
     });
+    gui.add(control, 'superSampling').onChange(function (value) {
+        if (value === true) {
+            material.defines.SUPERSAMPLING = true;
+        }
+        else {
+            delete material.defines.SUPERSAMPLING;
+        }
+        material.needsUpdate = true;
+        render();
+    });
+
+    stats = new Stats();
+    document.body.appendChild(stats.domElement);
 }
 
 function render() {
     light.position.copy(camera.position);
     light.lookAt(0, 0, 0);
     renderer.render(scene, camera);
+    stats.update();
 }
 
 init();

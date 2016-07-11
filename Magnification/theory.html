@@ -12,13 +12,14 @@
     Zooming in and especially when looking at the sign in the center of the image we note that bilinear interpolation gives a far better result. 
 
     <h1>Minification</h1>
-    When the user zooms out the image must be downsampled to avoid aliasing. 
-
+    When the user zooms out more than one texel falls within each pixel and the image must be downsampled to avoid aliasing. 
+    <br>
     The aliasing is appearent when using both Nearest and Linear Minification, especially when zooming in and out and looking at the sign in the center of the image.
     The other two filters: LinearMipMapLinear and NearestMipMapNearest use mipmaps to avoid aliasing.
     LinearMipMapLinear is the default and it use bilinear filtering of image at two closest mimap levels followed by linear interpolation between interpolated images at the two mipmap levels (trilinear interpolation).
 
-    
+    <br />
+    Averaging over the texels within a pixel (downsampling) inside the fragment shader is an alternative approach: supersampling.
 
 
 </body>

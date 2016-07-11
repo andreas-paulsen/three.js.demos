@@ -1,11 +1,11 @@
 ﻿<!DOCTYPE html>
 <html>
 <head>
-    <title>Texture Magnification</title>
+    <title>seismic_texture Magnification</title>
     <style>
         body {
             margin: 0px;
-            background-color: #fff;
+            background-a: #fff;
             overflow: hidden;
         }
     </style>
@@ -15,8 +15,7 @@
     <script src="../three.min.js"></script>
     <script src="../dat.gui.js"></script>
     <script src="../OrbitControls.js"></script>
-    <script src="../ColorMaps.js"></script>
-    <script src="../TextureUtils.js"></script>
+    <script type="application/javascript" src="../stats.min.js"></script>
     <script src="main.js"></script>
 
     <script id="vertexShader" type="x-shader/x-vertex">
@@ -34,7 +33,42 @@
         uniform vec2 seismic_texture_size;
         varying vec2 v_uv;
         void main()	{
-            float a = texture2D(seismic_texture, vec2(v_uv.s, v_uv.t)).r;
+            float a;
+#ifdef SUPERSAMPLING
+            // The aliasing effect is caused by there being more than one texel withing each pixel (fragment) when zoomed out.
+            // By averaging over the texels within the pixel the texture is in effect down-sampled.
+            // Here we average over 9 "random" points within the pixel. 
+            vec2 UVx = dFdx(v_uv);
+            vec2 UVy = dFdy(v_uv);
+
+            float Ux = UVx.x;
+            float Vx = UVx.y;
+            float Uy = UVy.x;
+            float Vy = UVy.y;
+
+            //lookup points in a 3x3 grid inside each pixel. The lookup points are randomly offset from exact grid to avoid aliasing effect.
+            vec2 N  = vec2(- 0.05*Ux + 0.43*Uy , + 0.14*Vx + 0.44*Vy);
+            vec2 NE = vec2(+ 0.47*Ux + 0.36*Uy , + 0.28*Vx + 0.49*Vy);
+            vec2 E  = vec2(+ 0.38*Ux + 0.08*Uy , + 0.46*Vx + 0.06*Vy);
+            vec2 SE = vec2(+ 0.48*Ux - 0.21*Uy , + 0.32*Vx - 0.32*Vy);
+            vec2 S  = vec2(+ 0.22*Ux - 0.42*Uy , - 0.05*Vx - 0.45*Vy);
+            vec2 SW = vec2(- 0.25*Ux - 0.46*Uy , - 0.47*Vx - 0.33*Vy);
+            vec2 W  = vec2(- 0.45*Ux - 0.16*Uy , - 0.32*Vx - 0.21*Vy);
+            vec2 NW = vec2(- 0.45*Ux + 0.35*Uy , - 0.45*Vx + 0.43*Vy);
+
+            a  = texture2D(seismic_texture, v_uv).r;
+            a += texture2D(seismic_texture, v_uv + N).r;
+            a += texture2D(seismic_texture, v_uv + NE).r;
+            a += texture2D(seismic_texture, v_uv + E).r;
+            a += texture2D(seismic_texture, v_uv + SE).r;
+            a += texture2D(seismic_texture, v_uv + S).r;
+            a += texture2D(seismic_texture, v_uv + SW).r;
+            a += texture2D(seismic_texture, v_uv + W).r;
+            a += texture2D(seismic_texture, v_uv + NW).r;
+            a = a / 9.0;
+#else
+            a = texture2D(seismic_texture, v_uv).r;
+#endif
             gl_FragColor = vec4(a, a, a, 1);
         }
     </script>
