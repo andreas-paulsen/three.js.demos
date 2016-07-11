@@ -32,25 +32,24 @@ function init() {
                                             64, // # segments in width
                                             64);// # segments in height
 
-    // Phong shading: https://en.wikipedia.org/wiki/Phong_shading:
-    material = new THREE.MeshPhongMaterial({ color: 0xffffff });
-    /*
-    var imageObj = new Image()
-    imageObj.onload = function () {
-        material.map = THREE.ImageUtils.loadTexture(imageObj)
-        // or maybe load image into canvas?
-    }
-    imageObj.crossOrigin = "anonymous"
-    imageObj.src = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg'
-    */
-    THREE.ImageUtils.crossOrigin = '';
-    material.map = THREE.ImageUtils.loadTexture('https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg');
-    material.bumpMap = THREE.ImageUtils.loadTexture('earthbump1k.jpg');
-    material.bumpScale = 0.5;
-    var sphere = new THREE.Mesh(geometry, material);
-    scene.add(sphere);
+    var loader1 = new THREE.TextureLoader();
+    var loader2 = new THREE.TextureLoader();
+    loader1.crossOrigin = '';
+    loader2.crossOrigin = '';
+    loader1.load('https://upload.wikimedia.org/wikipedia/commons/a/ac/Earthmap1000x500.jpg', function (texture1) {
+        // Phong shading: https://en.wikipedia.org/wiki/Phong_shading:
+        material = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        material.map = texture1;
+        loader2.load('earthbump1k.jpg', function(texture2) {
+            material.bumpMap = texture2;
+            material.bumpScale = 0.5;
+            var sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+            render();
+        });
+    });
 
-
+    
     var Control = function () {
         this.bumpMap = 0.1;
     };
