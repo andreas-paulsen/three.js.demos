@@ -119,7 +119,7 @@ init();
 function loadElevation() {
     var tloader = new THREE.TextureLoader();
     tloader.crossOrigin = "";
-    tloader.load('Mallorca.png', function (texture) {
+    tloader.load('Mallorca.PNG', function (texture) {
         elevationTexture = texture;
         changeGeometry();
         render();
