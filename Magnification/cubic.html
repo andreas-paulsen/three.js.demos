@@ -44,6 +44,17 @@
     and
     \[ v=i+1+\frac{w_3}{w_2+w_3}\]
  
+    <h3>B spline interpolation</h3>
+    <img src="Bspline.PNG" width="200" height="200" />
+    \[ f_{i+s,j+t}= \sum_{k=-1}^2 \sum_{l=-1}^2B_k(s)B_l(t)f_{i+k,j+l} \]
+    where 
+    \[ 0<=s<=1 \] 
+    \[ 0<=t<=1 \] 
+    \[ B_0(s) = 1/6(-s^3+3s^2-s+1) \]
+    \[ B_1(s) = 1/6(3s^3-6s^2+4) \]
+    \[ B_2(s) = 1/6(-3s^3+3s^2+1) \]
+    \[ B_3(s) = 1/6s^3 \]
+  
 
     <h3>References</h3>
     <a href="http://http.developer.nvidia.com/GPUGems2/gpugems2_chapter20.html">GPU Gems 2: Fast Third-Order Texture Filtering</a>
