@@ -10,7 +10,7 @@ function init() {
 
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
-    camera.position.set(-50, -50, 150);
+    camera.position.set(150, 150, 150);
     camera.lookAt(0, 0, 0);
 
     controls = new THREE.OrbitControls(camera);
@@ -20,41 +20,58 @@ function init() {
     light.position.set(-50, -50, 150).normalize();
     scene.add(light);
 
-    var ambientLight = new THREE.AmbientLight( 0xff4040 );
+    var ambientLight = new THREE.AmbientLight( 0x404040 );
     scene.add(ambientLight);
    
     
     
     
-    // load model
-    var objLoader = new THREE.OBJLoader();
-    objLoader.load('dragon.obj', function(object) {
-        console.log(object);
-        // loop trough all children:
-        object.traverse( function(child) {
-            if (child instanceof THREE.Mesh) {
-                console.log(child);  
-                // apply custom material
-                material = new THREE.MeshPhongMaterial({ ambient: 0x050505, color: 0x0033ff, specular: 0x555555, shininess: 30 });
-                //var material = new THREE.MeshPhongMaterial();
-                //child.material = material;
-                // enable casting shadows
-                child.castShadow = true;
-                child.receiveShadow = true;
-                //scene.add(child);
-            }
-        });
-                   
-        object.position.x = 0;
-        object.position.y = 0;
-        object.position.z = 0;
-        object.scale = 1.0;
-        scene.add(object);
-    });
-    
-    
-   
+    // load textures from image:
+    var textLoader = new THREE.TextureLoader();
+    textLoader.crossOrigin = '';
+    var diffuseTexture = textLoader.load("R2D2/R2D2_Diffuse-Reflection-Combined-small.png");
+    var bumpTexture = textLoader.load("R2D2/R2D2_Normal-small.png");
+    var emissiveTexture = textLoader.load("R2D2/R2D2_Illumination-small.png");
+    var specularTexture = textLoader.load("R2D2/R2D2_Specular-small.png");
 
+    // load model:
+    var loader = new THREE.OBJLoader();
+    loader.crossOrigin = '';
+    loader.load("R2D2/R2D2_Standing.obj", function (model) {
+        model.children.forEach(function (child) {
+            var material = child.material;
+
+            // basic texture
+            material.map = diffuseTexture;
+
+            // bumps
+            material.bumpMap = bumpTexture;
+            material.bumpScale = 0.3;
+
+            // glow
+            material.emissive = new THREE.Color(0xffffff);
+            material.emissiveMap = emissiveTexture;
+
+            // specular
+            material.specularMap = specularTexture;
+
+            child.receiveShadow = true;
+            child.castShadow = true;
+
+            if (child.name === "Head") head = child;
+            if (child.name === "Front_Projector") frontP = child;
+        });
+
+        model.scale.x = 0.95;
+        model.scale.y = 0.95;
+        model.scale.z = 0.95;
+
+        model.position.y = -10;
+        obj = model;
+        scene.add(obj);
+        render();
+    }); // load
+    
     renderer = new THREE.WebGLRenderer();
     renderer.setSize(window.innerWidth, window.innerHeight);
 
