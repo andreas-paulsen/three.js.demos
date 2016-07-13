@@ -3,6 +3,11 @@ var scene;
 var renderer;
 var mesh;
 var uniforms;
+var bumpTexture;
+var emissiveTexture;
+var specularTexture;
+var r2d2model;
+var control;
 init();
 animate();
 
@@ -30,14 +35,15 @@ function init() {
     var textLoader = new THREE.TextureLoader();
     textLoader.crossOrigin = '';
     var diffuseTexture = textLoader.load("R2D2/R2D2_Diffuse-Reflection-Combined-small.png");
-    var bumpTexture = textLoader.load("R2D2/R2D2_Normal-small.png");
-    var emissiveTexture = textLoader.load("R2D2/R2D2_Illumination-small.png");
-    var specularTexture = textLoader.load("R2D2/R2D2_Specular-small.png");
+    bumpTexture = textLoader.load("R2D2/R2D2_Normal-small.png");
+    emissiveTexture = textLoader.load("R2D2/R2D2_Illumination-small.png");
+    specularTexture = textLoader.load("R2D2/R2D2_Specular-small.png");
 
     // load model:
     var loader = new THREE.OBJLoader();
     loader.crossOrigin = '';
     loader.load("R2D2/R2D2_Standing.obj", function (model) {
+        r2d2model = model;
         model.children.forEach(function (child) {
             var material = child.material;
 
@@ -82,10 +88,53 @@ function init() {
 
     window.addEventListener('resize', onWindowResize, false);
 
+    var Control = function () {
+        this.useBumpMap = true;
+        this.useEmissiveMap = true;
+        this.useSpecularMap = true;
+    };
+    control = new Control();
+    var gui = new dat.GUI();
+    gui.add(control, 'useBumpMap').onChange(function (value) {
+        changeMaps();
+    });
+    gui.add(control, 'useEmissiveMap').onChange(function (value) {
+        changeMaps();
+    });
+    gui.add(control, 'useSpecularMap').onChange(function (value) {
+        changeMaps();
+    });
+
     render();
 }
 
-function animate() {
+function changeMaps() {
+    var bumpMap = null;
+    var emissiveMap = null;
+    var emissiveColor = 0x000000;
+    var specularMap = null;
+    if (control.useBumpMap) {
+        bumpMap = bumpTexture;
+    }
+    if (control.useEmissiveMap) {
+        emissiveColor = 0xffffff;
+        emissiveMap = emissiveTexture;
+    }
+    if (control.useSpecularMap) {
+        specularMap = specularTexture;
+    }
+    r2d2model.children.forEach(function (child) {
+        var material = child.material;
+        material.bumpMap = bumpMap;
+        material.emissive = new THREE.Color(emissiveColor);
+        material.emissiveMap = emissiveMap;
+        material.specularMap = specularMap;
+        material.needsUpdate = true;
+    });
+    render();
+}
+
+    function animate() {
     render();
     // Ask the browser to call this function again as soon as possible which is when it is done with render():
     requestAnimationFrame(animate);
