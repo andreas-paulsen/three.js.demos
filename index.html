@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>Kjelltech.GitHub.io by KjellTech</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">Kjelltech.GitHub.io</h1>
+      <h2 class="project-tagline"></h2>
+    </section>
+    
+    <section class="main-content">
+     
+    <h2>OpenGL Tutorial</h2>
+    <a href = "https://rawgit.com/KjellTech/OpenGL-Tutorial/master/Tutorial.html">OpenGL Tutorial</a><br>
+    
+   
+      
+      <h3>
+<a id="designer-templates" class="anchor" href="#designer-templates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Three.js demos</h3>
+
+
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/HeatEquation/index.html">Heat Equation</a>
+<br>
+Displays a rectangular plane viewed with Orthographic camera. A RGB texture is created from a matrix of temperature values by applying a color map.  
+The texture is applied to the material of the plane. Repeatedly the matrix is updated by replacing each pixel with the average of its neighbour pixels.
+
+<br><br>
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/FFT/index.html">FFT</a>
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/FFT/FFT.htm">Theory</a>
+<br>
+
+<br><br>
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Interpolation/index.html">Interpolation</a>
+<br>
+Reads scattered xyz points from an ascii file using <b>FileReader.</b> Displays the points as a <b>Points</b> object.
+Interpolate a surface using <a href = "https://en.wikipedia.org/wiki/Inverse_distance_weighting">Inverse Distance Weighting</a>
+
+from the points and display it as a <b>Mesh</b> using <b>BufferGeometry</b>.<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Interpolation/peaks.txt" download>Example input data</a> 
+<br><br>
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Magnification/index.html">Magnification</a>
+<br>
+Graphics cards have built-in support for nearest and bilinear interpolation of textures (magnification).
+Nearest gives a pixelated image when zooming in. Bilinear gives a smoother image.<br>
+When zooming out aliasing and moire patterns may be a problem. Graphics cards have built-in support for mipmapping. 
+That is a down sampled texture is used when zoomed out (minification).
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Magnification/theory.html">Theory</a><br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Magnification/cubic.html">Cubic interpolation</a>
+<br>
+<br>
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/TiledTexture/index.html">TiledTexture</a>
+<br>
+
+<br>
+
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Globe/index.html">Globe</a>
+<br>
+Displays a Sphere and applies an image of the world as texture map. Another image is used as bump map.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Surface/index.html">Surface</a>
+<br>
+Triangulates a mathematical function z = f(x,y). Uses BufferGeometry to send the triangulated vertices to GPU.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/AnimatedSurface/index.html">Animated Surface</a>
+<br>
+Uses ShaderMaterial to specify a vertex shader that modulates the z value of the vertex by a function and a timestep.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/ObjectLoader/index.html">3D model</a>
+<br>
+Loads and displays a 3D model of R2D2 from an .obj file. The model comes with an ordinary map (texture), bump map, glow map and specular map that is loaded from .png files.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/PointCloud/index.html">PointCloud</a>
+<br>
+Reads a cloud of lidar xyz points from an ascii file into the <b>vertices</b> of a <b>Geometry</b>. Sets the <b>colors</b> of the geometry based upon the z value of each vertex using a color map. 
+Combine the geometry with a <b>PointsMaterial</b> into a <b>Points</b> object.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/MeshMaterials/index.html">MeshMaterials</a>
+<br>
+Shows the differences between the materials a Mesh may have.<br>
+Total illumination, I, is a sum:
+I = Ia + Id + Is, Ia: ambient light, Id: diffuse (non shiny) reflection, Is: specular (shiny) reflection. <br>
+<b>BasicMaterial</b> only takes into account ambient light, Ia, and has no shading. <br>
+<b>LambertMaterial</b> takes into account ambient and directional lights, Ia and Id, and has shading but is not shiny.<br>
+<b>PhongMaterial</b> takes into account account ambient light and directional lights, has shading and is shiny, Ia, Id, and Is.<br>
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/Skybox/index.html">Skybox</a>
+<br>
+Skybox is a way to create realistic surroundings. A huge <b>CubeGeometry</b> is placed around the camera. 
+For each face of the cube a <b>MeshBasicMaterial</b> with a separate texture is created. 
+The texture is an image of the surroundings as seen from the center of the cube projected onto the face.
+A <b>MeshFaceMaterial</b> is created from an array of all the materials. This material is combined with the geometry into a <b>Mesh</b>.
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/DEM/index.html">DigitalElevationModel</a>
+<br>
+Reads elevation from a 16 bit unsigned integer png into a texture. Call an ESRI map service to get a RGB png for the same area and read this 
+into another texture.
+Pass both textures to the shaders using <b>ShaderMaterial</b>. Use the elevation texture to set z in the vertex shader. 
+Use the color texture to set the color in the fragment shader. The result is a map draped onto an elevation model. 
+<br>
+
+<br>
+<a href = "http://rawgit.com/KjellTech/three.js.demos/master/PoTree/index.html">Potree</a>
+<br>
+
+  </body>
+</html>
